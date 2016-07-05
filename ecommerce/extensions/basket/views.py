@@ -8,6 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from requests.exceptions import ConnectionError, Timeout
 from opaque_keys.edx.keys import CourseKey
 from oscar.apps.basket.views import *  # pylint: disable=wildcard-import, unused-wildcard-import
+from oscar.core.utils import redirect_to_referrer
 from slumber.exceptions import SlumberBaseException
 
 from ecommerce.core.constants import ENROLLMENT_CODE_PRODUCT_CLASS_NAME, SEAT_PRODUCT_CLASS_NAME
@@ -22,6 +23,7 @@ from ecommerce.extensions.partner.shortcuts import get_partner_for_site
 Benefit = get_model('offer', 'Benefit')
 logger = logging.getLogger(__name__)
 StockRecord = get_model('partner', 'StockRecord')
+Voucher = get_model('voucher', 'Voucher')
 
 
 class BasketSingleItemView(View):
@@ -170,3 +172,64 @@ class BasketSummaryView(BasketView):
         })
 
         return context
+
+
+class VoucherAddMessagesView(VoucherAddView):
+    """
+    View that applies a voucher to basket.
+    We change default messages oscar returns.
+    """
+    def form_valid(self, form):
+        super(VoucherAddMessagesView, self).form_valid(form)
+
+        code = form.cleaned_data['code']
+        try:
+            voucher = Voucher.objects.get(code=code)
+        except Voucher.DoesNotExist:
+            voucher = None
+
+        for msg in list(messages.get_messages(self.request)):
+            if voucher is None:
+                messages.error(
+                    self.request,
+                    _("Code '{code}' does not exist.").format(code=code)
+                )
+
+            elif str(msg) == _("You have already added the '{code}' voucher to your basket").format(code=code):
+                messages.error(
+                    self.request,
+                    _("You have already added code '{code}' to your basket.").format(code=code)
+                )
+
+            elif str(msg) == _("The '{code}' voucher has expired").format(code=code):
+                messages.error(
+                    self.request,
+                    _("Code '{code}' has expired.").format(code=code)
+                )
+
+            elif str(msg) == _("Voucher '{code}' added to basket").format(code=code):
+                messages.info(
+                    self.request,
+                    _("Code '{code}' added to basket.").format(code=code)
+                )
+
+            elif str(msg) == _("Your basket does not qualify for a voucher discount"):
+                messages.warning(
+                    self.request,
+                    _("Your basket does not qualify for a code discount.").format(code=code)
+                )
+                self.request.basket.vouchers.remove(voucher)
+
+            elif str(msg) == _("This voucher has already been used"):
+                messages.error(
+                    self.request,
+                    _("Code '{code}' has already been redeemed.").format(code=code)
+                )
+
+            else:
+                messages.error(
+                    self.request,
+                    _("Code '{code}' is invalid.").format(code=code)
+                )
+
+        return redirect_to_referrer(self.request, 'basket:summary')

@@ -7,6 +7,7 @@ from oscar.core.loading import get_class
 class BasketApplication(app.BasketApplication):
     single_item_view = get_class('basket.views', 'BasketSingleItemView')
     summary_view = get_class('basket.views', 'BasketSummaryView')
+    add_voucher_view = get_class('basket.views', 'VoucherAddMessagesView')
 
     def get_urls(self):
         urls = [
