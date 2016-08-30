@@ -85,6 +85,7 @@ def create_coupon_product(
         category,
         code,
         course_seat_types,
+        email_domains,
         end_datetime,
         max_uses,
         note,
@@ -106,6 +107,7 @@ def create_coupon_product(
         category (dict): Contains category ID and name.
         code (str): Voucher code.
         course_seat_types (str): Comma-separated list of course seat types.
+        email_domains (str): Comma-separated list of email domains.
         end_datetime (Datetime): Voucher end Datetime.
         max_uses (int): Number of Voucher max uses.
         note (str): Coupon note.
@@ -139,6 +141,7 @@ def create_coupon_product(
             code=code or None,
             coupon=coupon_product,
             course_seat_types=course_seat_types,
+            email_domains=email_domains,
             end_datetime=end_datetime,
             max_uses=max_uses,
             name=title,
