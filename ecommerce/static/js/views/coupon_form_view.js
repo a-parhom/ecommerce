@@ -475,13 +475,15 @@ define([
                 course.listenTo(course, 'sync', _.bind(function () {
                     this.seatTypes = _.map(course.seats(), function (seat) {
                         var name = seat.getSeatTypeDisplayName();
-                        return $('<option></option>')
-                            .text(name)
-                            .val(name)
-                            .data({
-                                price: seat.get('price'),
-                                stockrecords: _.map(seat.get('stockrecords'), parseId)
-                            });
+                        if (name !== 'Credit') {
+                            return $('<option></option>')
+                                .text(name)
+                                .val(name)
+                                .data({
+                                    price: seat.get('price'),
+                                    stockrecords: _.map(seat.get('stockrecords'), parseId)
+                                });
+                        }
                     });
                     // update field
                     this.$('[name=seat_type]')

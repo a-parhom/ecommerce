@@ -315,6 +315,43 @@ class User(AbstractUser):
             return True
         return False
 
+    def is_eligible(self, request, course_key):
+        """
+        Check if a user is eligible for a credit course.
+        Calls the LMS eligibility API endpoint and sends the username and course key
+        query parameters and returns eligibility details for the user and course combination.
+
+        Args:
+            request (WSGIRequest): The request that contains user and siteconfiguration information.
+            course_key (string): The course key for which the eligibility is checked for.
+
+        Returns:
+            A list that contains eligibility information, or empty if user is not eligible.
+
+        Raises:
+            ConnectionError, SlumberBaseException and Timeout for failures in establishing a
+            connection with the LMS eligibility API endpoint.
+        """
+        query_strings = {
+            'username': request.user.username,
+            'course_key': course_key
+        }
+        try:
+            api = EdxRestApiClient(
+                request.site.siteconfiguration.build_lms_url('api/credit/v1/'),
+                oauth_access_token=self.access_token
+            )
+            response = api.eligibility().get(**query_strings)
+        except (ConnectionError, SlumberBaseException, Timeout) as ex:
+            log.exception(
+                'Failed to retrieve enrollment details for [%s] in course [%s], Because of [%s]',
+                self.username,
+                course_key,
+                ex,
+            )
+            raise ex
+        return response
+
 
 class Client(User):
     pass

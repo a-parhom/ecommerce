@@ -4,6 +4,7 @@ import csv
 import logging
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
@@ -127,6 +128,16 @@ class CouponOfferView(TemplateView):
                 return {
                     'error': _('The voucher is not applicable to your current basket.'),
                 }
+            if products[0].attr.certificate_type == 'credit':
+                if isinstance(self.request.user, AnonymousUser):
+                    return {
+                        'error': _('You need to be logged in to see this offer.'),
+                    }
+                eligible = self.request.user.is_eligible(self.request, products[0].attr.course_key)
+                if not eligible:
+                    return {
+                        'error': _('You are not eligible for this offer.'),
+                    }
             valid_voucher, msg = voucher_is_valid(voucher, products, self.request)
             if valid_voucher:
                 self.template_name = 'coupons/offer.html'

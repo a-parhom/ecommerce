@@ -109,6 +109,7 @@ class VoucherViewSet(NonDestroyableModelViewSet):
         catalog_query = benefit.range.catalog_query
         next_page = None
         offers = []
+        credit = False
         if catalog_query:
             response = get_range_catalog_query_results(
                 limit=request.GET.get('limit', DEFAULT_CATALOG_PAGE_SIZE),
@@ -133,7 +134,8 @@ class VoucherViewSet(NonDestroyableModelViewSet):
                     (result for result in response['results'] if result['key'] == course_id),
                     None
                 )
-
+                if product.attr.certificate_type == 'credit':
+                    credit = True
                 try:
                     stock_record = stock_records.get(product__id=product.id)
                 except StockRecord.DoesNotExist:
@@ -153,7 +155,8 @@ class VoucherViewSet(NonDestroyableModelViewSet):
                         course_info=course_catalog_data,
                         is_verified=contains_verified_course,
                         stock_record=stock_record,
-                        voucher=voucher
+                        voucher=voucher,
+                        credit=credit
                     ))
         else:
             product = products[0]
@@ -161,6 +164,9 @@ class VoucherViewSet(NonDestroyableModelViewSet):
             course = get_object_or_404(Course, id=course_id)
             stock_record = get_object_or_404(StockRecord, product__id=product.id)
             course_info = get_course_info_from_lms(course_id)
+
+            if product.attr.certificate_type == 'credit':
+                credit = True
 
             if course_info:
                 course_info['image'] = {'src': get_lms_url(course_info['media']['course_image']['uri'])}
@@ -171,11 +177,13 @@ class VoucherViewSet(NonDestroyableModelViewSet):
                     course_info=course_info,
                     is_verified=(course.type == 'verified'),
                     stock_record=stock_record,
-                    voucher=voucher
+                    voucher=voucher,
+                    credit=credit
                 ))
+
         return {'next': next_page, 'results': offers}
 
-    def get_course_offer_data(self, benefit, course, course_info, is_verified, stock_record, voucher):
+    def get_course_offer_data(self, benefit, course, course_info, is_verified, stock_record, voucher, credit):
         """
         Gets course offer data.
         Arguments:
@@ -203,4 +211,5 @@ class VoucherViewSet(NonDestroyableModelViewSet):
             'stockrecords': serializers.StockRecordSerializer(stock_record).data,
             'title': course.name,
             'voucher_end_date': voucher.end_datetime,
+            'credit': credit
         }

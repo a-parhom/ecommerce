@@ -85,6 +85,7 @@ class Checkout(TemplateView):
                 self.request.site.siteconfiguration.segment_key,
                 course.id
             ),
+            'code': self.request.GET.get('code')
         })
 
         return context
