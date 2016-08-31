@@ -16,6 +16,7 @@ from jsonfield.fields import JSONField
 from requests.exceptions import ConnectionError, Timeout
 from slumber.exceptions import SlumberBaseException
 
+from ecommerce.core.url_utils import get_lms_url
 from ecommerce.courses.utils import mode_for_seat
 from ecommerce.extensions.payment.exceptions import ProcessorNotFoundError
 from ecommerce.extensions.payment.helpers import get_processor_class_by_name, get_processor_class
@@ -315,14 +316,13 @@ class User(AbstractUser):
             return True
         return False
 
-    def is_eligible(self, request, course_key):
+    def is_eligible(self, course_key):
         """
         Check if a user is eligible for a credit course.
         Calls the LMS eligibility API endpoint and sends the username and course key
         query parameters and returns eligibility details for the user and course combination.
 
         Args:
-            request (WSGIRequest): The request that contains user and siteconfiguration information.
             course_key (string): The course key for which the eligibility is checked for.
 
         Returns:
@@ -333,12 +333,12 @@ class User(AbstractUser):
             connection with the LMS eligibility API endpoint.
         """
         query_strings = {
-            'username': request.user.username,
+            'username': self.username,
             'course_key': course_key
         }
         try:
             api = EdxRestApiClient(
-                request.site.siteconfiguration.build_lms_url('api/credit/v1/'),
+                get_lms_url('api/credit/v1/'),
                 oauth_access_token=self.access_token
             )
             response = api.eligibility().get(**query_strings)

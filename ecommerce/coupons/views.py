@@ -5,6 +5,7 @@ import logging
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.views import redirect_to_login
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
@@ -131,12 +132,7 @@ class CouponOfferView(TemplateView):
             if products[0].attr.certificate_type == 'credit':
                 if isinstance(self.request.user, AnonymousUser):
                     return {
-                        'error': _('You need to be logged in to see this offer.'),
-                    }
-                eligible = self.request.user.is_eligible(self.request, products[0].attr.course_key)
-                if not eligible:
-                    return {
-                        'error': _('You are not eligible for this offer.'),
+                        'login': True
                     }
             valid_voucher, msg = voucher_is_valid(voucher, products, self.request)
             if valid_voucher:
@@ -152,6 +148,11 @@ class CouponOfferView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         """Get method for coupon redemption page."""
+        context = self.get_context_data()
+        if context and context.get('login'):
+            params = self.request.META.get('QUERY_STRING')
+            next_url = '{}?{}'.format(self.request.path, params)
+            return redirect_to_login(next_url)
         return super(CouponOfferView, self).get(request, *args, **kwargs)
 
 

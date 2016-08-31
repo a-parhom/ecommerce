@@ -129,13 +129,17 @@ class VoucherViewSet(NonDestroyableModelViewSet):
                 if not request.strategy.fetch_for_product(product).availability.is_available_to_buy:
                     logger.info('%s is unavailable to buy. Omitting it from the results.', product)
                     continue
+
                 course_id = product.course_id
                 course_catalog_data = next(
                     (result for result in response['results'] if result['key'] == course_id),
                     None
                 )
                 if product.attr.certificate_type == 'credit':
-                    credit = True
+                    if request.user.is_eligible(product.attr.course_key):
+                        credit = True
+                    else:
+                        continue
                 try:
                     stock_record = stock_records.get(product__id=product.id)
                 except StockRecord.DoesNotExist:
