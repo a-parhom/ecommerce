@@ -4,8 +4,6 @@ import csv
 import logging
 
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import AnonymousUser
-from django.contrib.auth.views import redirect_to_login
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
@@ -22,6 +20,7 @@ from ecommerce.core.views import StaffOnlyMixin
 from ecommerce.extensions.api import exceptions
 from ecommerce.extensions.basket.utils import prepare_basket
 from ecommerce.extensions.checkout.mixins import EdxOrderPlacementMixin
+from ecommerce.coupons.decorators import login_required_for_credit
 
 Applicator = get_class('offer.utils', 'Applicator')
 Basket = get_model('basket', 'Basket')
@@ -129,11 +128,6 @@ class CouponOfferView(TemplateView):
                 return {
                     'error': _('The voucher is not applicable to your current basket.'),
                 }
-            if products[0].attr.certificate_type == 'credit':
-                if isinstance(self.request.user, AnonymousUser):
-                    return {
-                        'login': True
-                    }
             valid_voucher, msg = voucher_is_valid(voucher, products, self.request)
             if valid_voucher:
                 self.template_name = 'coupons/offer.html'
@@ -146,13 +140,9 @@ class CouponOfferView(TemplateView):
             'error': _('This coupon code is invalid.'),
         }
 
+    @method_decorator(login_required_for_credit)
     def get(self, request, *args, **kwargs):
         """Get method for coupon redemption page."""
-        context = self.get_context_data()
-        if context and context.get('login'):
-            params = self.request.META.get('QUERY_STRING')
-            next_url = '{}?{}'.format(self.request.path, params)
-            return redirect_to_login(next_url)
         return super(CouponOfferView, self).get(request, *args, **kwargs)
 
 
