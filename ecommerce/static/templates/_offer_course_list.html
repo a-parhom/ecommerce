@@ -51,13 +51,13 @@
                             <div class="pull-right">
                                     <% if (isCredit) { %>
                                         <a href="/credit/checkout/<%= course.attributes.id %>/?code=<%= code %>"
-                                           id="PurchaseCertificate"
+                                           id="PurchaseCredit"
                                            class="btn btn-success btn-purchase"
                                            data-track-type="click"
                                            data-track-event="edx.bi.ecommerce.coupons.accept_offer"
                                            data-track-category="coupon-codes"
                                            data-course-id="<%= course.attributes.id %>">
-                                            <%- gettext('credit') %>
+                                            <%- gettext('Buy Credit') %>
                                         </a>
                                     <% } else { %>
                                         <% if (isEnrollmentCode) { %>

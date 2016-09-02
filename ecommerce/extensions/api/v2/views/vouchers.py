@@ -26,6 +26,7 @@ from ecommerce.extensions.api.v2.views import NonDestroyableModelViewSet
 
 logger = logging.getLogger(__name__)
 StockRecord = get_model('partner', 'StockRecord')
+Order = get_model('order', 'Order')
 Voucher = get_model('voucher', 'Voucher')
 
 
@@ -135,11 +136,15 @@ class VoucherViewSet(NonDestroyableModelViewSet):
                     (result for result in response['results'] if result['key'] == course_id),
                     None
                 )
+                # Omit credit seats for which the user is not eligible or which the user already bought.
                 if product.attr.certificate_type == 'credit':
                     if request.user.is_eligible(product.attr.course_key):
                         credit = True
+                        if Order.objects.filter(user=request.user, lines__product=product).exists():
+                            continue
                     else:
                         continue
+
                 try:
                     stock_record = stock_records.get(product__id=product.id)
                 except StockRecord.DoesNotExist:

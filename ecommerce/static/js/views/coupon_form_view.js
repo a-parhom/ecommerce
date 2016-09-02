@@ -375,8 +375,7 @@ define([
                     this.hideField('[name=invoice_discount_value]', null);
                     this.hideField('[name=tax_deducted_source_value]', null);
                     this.$('#non-tax-deducted').prop('checked', true).trigger('change');
-                    this.formGroup('[name=tax_deduction]').addClass(this.hiddenClass);
-                    this.model.set('tax_deducted_source', 'No');
+                    this.hideField('[name=tax_deduction]', null);
                 }
             },
 

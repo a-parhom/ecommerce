@@ -20,7 +20,7 @@ from ecommerce.core.views import StaffOnlyMixin
 from ecommerce.extensions.api import exceptions
 from ecommerce.extensions.basket.utils import prepare_basket
 from ecommerce.extensions.checkout.mixins import EdxOrderPlacementMixin
-from ecommerce.coupons.decorators import login_required_for_credit
+# from ecommerce.coupons.decorators import login_required_for_credit
 
 Applicator = get_class('offer.utils', 'Applicator')
 Basket = get_model('basket', 'Basket')
@@ -140,7 +140,7 @@ class CouponOfferView(TemplateView):
             'error': _('This coupon code is invalid.'),
         }
 
-    @method_decorator(login_required_for_credit)
+    # @method_decorator(login_required_for_credit)
     def get(self, request, *args, **kwargs):
         """Get method for coupon redemption page."""
         return super(CouponOfferView, self).get(request, *args, **kwargs)

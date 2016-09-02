@@ -18,7 +18,7 @@ define([
 
             setSku: function (sku) {
                 var code = window.location.search.substring(1).split('=')[1];
-                this.button.attr('href', '/basket/single-item/?code=' + code + '&sku=' + sku);
+                this.button.attr('href', '/coupons/redeem/?code=' + code + '&sku=' + sku);
             }
         });
     });
