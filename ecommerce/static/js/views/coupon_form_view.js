@@ -362,7 +362,8 @@ define([
                     this.hideField('[name=invoice_discount_value]', null);
                     this.hideField('[name=tax_deducted_source_value]', null);
                     this.$('#non-tax-deducted').prop('checked', true).trigger('change');
-                    this.hideField('[name=tax_deduction]', null);
+                    this.formGroup('[name=tax_deduction]').addClass(this.hiddenClass);
+                    this.model.set('tax_deducted_source', 'No');
                 }
             },
 
@@ -371,7 +372,7 @@ define([
                 if (tax_deduction === 'Yes') {
                     this.formGroup('[name=tax_deducted_source_value]').removeClass(this.hiddenClass);
                 } else if (tax_deduction === 'No') {
-                    this.hideField('[name=tax_deducted_source_value]', null);
+                    this.hideField('[name=tax_deducted_source_value]', 'No');
                 }
             },
 
@@ -592,8 +593,12 @@ define([
                     this.$('.catalog-query').removeClass('editing');
                 }
 
-                this.setLimitToElement(this.$('[name=invoice_discount_value]'), 100, 1);
-                this.setLimitToElement(this.$('[name=benefit_value]'), 100, 1);
+                if (this.$('[name=invoice_discount_type]').val() === 'Percentage') {
+                    this.setLimitToElement(this.$('[name=invoice_discount_value]'), 100, 1);
+                }
+                if (this.$('[name=benefit_type]').val() === 'Percentage') {
+                    this.setLimitToElement(this.$('[name=benefit_value]'), 100, 1);
+                }
 
                 // Add date picker
                 Utils.addDatePicker(this);
