@@ -6,6 +6,7 @@ import ddt
 import httpretty
 import pytz
 from django.conf import settings
+from django.contrib.messages import get_messages
 from django.contrib.messages.storage.fallback import FallbackStorage  # Messages doesn't work without fallback
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
@@ -446,8 +447,7 @@ class VoucherAddMessagesViewTests(TestCase):
         self.form.cleaned_data = {'code': COUPON_CODE}
 
     def get_error_message_from_request(self):
-        # Returns message from request because 'messages' doesn't exist in tests
-        return str(list(self.request._messages)[-1])  # pylint: disable=protected-access
+        return str(list(get_messages(self.request))[-1])
 
     def set_basket_request_and_call_form_valid(self):
         self.request.basket = self.basket
