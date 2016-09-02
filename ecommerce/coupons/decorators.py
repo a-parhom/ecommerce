@@ -2,7 +2,7 @@ from functools import wraps
 
 from django.contrib.auth.views import redirect_to_login
 
-from ecommerce.coupons.views import get_voucher_and_products_from_code
+from ecommerce.extensions.voucher.utils import get_voucher_and_products_from_code
 
 
 def login_required_for_credit(function):

@@ -18,7 +18,7 @@ from ecommerce.core.url_utils import get_lms_url
 from ecommerce.courses.models import Course
 from ecommerce.courses.utils import get_course_info_from_lms
 from ecommerce.coupons.utils import get_range_catalog_query_results
-from ecommerce.coupons.views import get_voucher_and_products_from_code
+from ecommerce.extensions.voucher.utils import get_voucher_and_products_from_code
 from ecommerce.extensions.api import exceptions, serializers
 from ecommerce.extensions.api.permissions import IsOffersOrIsAuthenticatedAndStaff
 from ecommerce.extensions.api.v2.views import NonDestroyableModelViewSet
