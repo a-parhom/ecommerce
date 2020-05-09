@@ -65,11 +65,11 @@ DATABASES = {
 
 # GENERAL CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#time-zone
-TIME_ZONE = 'America/New_York'
+TIME_ZONE = 'Europe/Kiev'
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#language-code
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en'
+LANGUAGE_CODE = 'uk'
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#site-id
 # This needs to be set to None in order to support multitenancy
@@ -83,8 +83,7 @@ USE_I18N = True
 
 LANGUAGES = (
     ('en', _('English')),
-    ('es', _('Spanish')),
-    ('es-419', _('Spanish (Latin American)')),
+    ('uk', _('Ukrainian')),
 )
 
 LOCALE_PATHS = (

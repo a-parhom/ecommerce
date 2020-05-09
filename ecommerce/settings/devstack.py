@@ -50,6 +50,13 @@ PAYMENT_PROCESSOR_CONFIG = {
             'cancel_checkout_path': PAYMENT_PROCESSOR_CANCEL_PATH,
             'error_path': PAYMENT_PROCESSOR_ERROR_PATH,
         },
+        'liqpay': {
+            'public_key': 'liqpay_public_key',
+            'private_key': 'liqpay_private_key',
+            'host': 'https://www.liqpay.ua/api/',
+            'cancel_checkout_path': PAYMENT_PROCESSOR_CANCEL_PATH,
+            'error_path': PAYMENT_PROCESSOR_ERROR_PATH,
+        },
     },
 }
 # END PAYMENT PROCESSING
