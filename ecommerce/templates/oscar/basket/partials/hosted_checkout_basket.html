@@ -165,6 +165,9 @@
                             {% elif processor.NAME == 'paypal' %}
                                 {# Translators: Do NOT translate the name PayPal. #}
                                 {% trans "Checkout with PayPal" as tmsg %}{{ tmsg | force_escape }}
+                            {% elif processor.NAME == 'liqpay' %}
+                                {# Translators: Do NOT translate the name LiqPay. #}
+                                {% trans "Checkout with LiqPay" %}
                             {% endif %}
                         </button>
                     {% endfor %}

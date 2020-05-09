@@ -73,11 +73,11 @@ DATABASES = {
 
 # GENERAL CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#time-zone
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Kiev'
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#language-code
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en'
+LANGUAGE_CODE = 'uk'
 
 SITE_ID = 1
 
@@ -86,8 +86,7 @@ USE_I18N = True
 
 LANGUAGES = (
     ('en', _('English')),
-    ('es', _('Spanish')),
-    ('es-419', _('Spanish (Latin American)')),
+    ('uk', _('Ukrainian')),
 )
 
 LOCALE_PATHS = (
