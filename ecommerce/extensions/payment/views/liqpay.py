@@ -113,7 +113,6 @@ class LiqpayPaymentCallbackView(EdxOrderPlacementMixin, View):
 
         try:
             order = self.create_order(request, basket)
-            self.handle_post_order(order)
             return HttpResponse(status=201)
         except (ValueError, ObjectDoesNotExist, IntegrityError) as e:
             logger.exception(self.order_placement_failure_msg, basket.id, e)
