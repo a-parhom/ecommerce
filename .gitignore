@@ -30,6 +30,7 @@ media/cache/
 assets/
 node_modules/
 ecommerce/static/bower_components/
+ecommerce/static/bower_components.bak/
 ecommerce/static/build/
 npm-debug.log
 
