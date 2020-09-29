@@ -36,6 +36,7 @@ Basket = get_model('basket', 'Basket')
 Order = get_model('order', 'Order')
 log = logging.getLogger(__name__)
 
+import time
 
 class FreeCheckoutView(EdxOrderPlacementMixin, RedirectView):
     """ View to handle free checkouts.

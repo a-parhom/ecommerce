@@ -88,6 +88,14 @@ PAYMENT_PROCESSOR_CONFIG = {
             'cancel_checkout_path': PAYMENT_PROCESSOR_CANCEL_PATH,
             'error_path': PAYMENT_PROCESSOR_ERROR_PATH,
         },
+        'fondy': {
+            'version': '1.0.1',
+            'merchant_id': 'merchant_id',
+            'merchant_password': 'merchant_password',
+            'host': 'https://api.fondy.eu/api/',
+            'cancel_checkout_path': PAYMENT_PROCESSOR_CANCEL_PATH,
+            'error_path': PAYMENT_PROCESSOR_ERROR_PATH,
+        },
     },
 }
 # END PAYMENT PROCESSING

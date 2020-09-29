@@ -30,8 +30,8 @@
                                  alt="{{ line_data.product_title|default_if_none:'' }}"/>
                         </div>
                         <div class="col-md-5 col-sm-12">
-                            <p class="product-title">{{ line_data.product_title }} {% if line_data.course_key %}- {{ line_data.course_key.org }}
-                                ({{ line_data.course_key.run }}) {% endif %}</p>
+                            <p class="product-title">{{ line_data.product_title }} <!-- {% if line_data.course_key %}- {{ line_data.course_key.org }}
+                                ({{ line_data.course_key.run }}) {% endif %} --></p>
                             <p class="product-description">{{ line_data.product_description|default_if_none:'' }}</p>
                         </div>
                         {% if line_data.enrollment_code %}
@@ -168,6 +168,9 @@
                             {% elif processor.NAME == 'liqpay' %}
                                 {# Translators: Do NOT translate the name LiqPay. #}
                                 {% trans "Checkout with LiqPay" %}
+                            {% elif processor.NAME == 'fondy' %}
+                                {# Translators: Do NOT translate the name Fondy. #}
+                                {% trans "Checkout with Fondy" %}
                             {% endif %}
                         </button>
                     {% endfor %}
@@ -176,7 +179,7 @@
         </div>
     </div>
 
-    <div class="row verification-note">
+    <!--div class="row verification-note">
         <div class="col-sm-12">
             <span><i class="fa fa-exclamation-circle"></i></span>
             {# Translators: <strong></strong> tags will bold the text within. Keep the tags and translate the text within. #}
@@ -188,11 +191,11 @@
                 {% interpolate_html tmsg strong_start='<strong>'|safe strong_end='</strong>'|safe %}
             {% endif %}
         </div>
-    </div>
-    <div class="row help">
+    </div-->
+    <!--div class="row help">
         <div class="col-sm-12">
             <p><strong>{% trans "Have questions?" as tmsg %}{{ tmsg | force_escape }}</strong></p>
             <a href="{{ support_url }}">{% trans "Please read our FAQs to view common questions about our certificates." as tmsg %}{{ tmsg | force_escape }}</a>
         </div>
-    </div>
+    </div-->
 </div>

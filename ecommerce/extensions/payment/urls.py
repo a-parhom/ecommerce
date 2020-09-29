@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 from django.conf.urls import include, url
 
-from ecommerce.extensions.payment.views import PaymentFailedView, SDNFailure, cybersource, paypal, stripe, liqpay
+from ecommerce.extensions.payment.views import PaymentFailedView, SDNFailure, cybersource, paypal, stripe, liqpay, fondy, portmone
 
 CYBERSOURCE_APPLE_PAY_URLS = [
     url(r'^authorize/$', cybersource.CybersourceApplePayAuthorizationView.as_view(), name='authorize'),
@@ -33,11 +33,21 @@ LIQPAY_URLS = [
     url(r'^processed/$', liqpay.LiqpayPaymentProcessedView.as_view(), name='processed'),
 ]
 
+FONDY_URLS = [
+    url(r'^result/$', fondy.FondyPaymentResultView.as_view(), name='result'),
+]
+
+PORTMONE_URLS = [
+    url(r'^result/$', portmone.PortmonePaymentResultView.as_view(), name='result'),
+]
+
 urlpatterns = [
     url(r'^cybersource/', include((CYBERSOURCE_URLS, 'cybersource'))),
     url(r'^error/$', PaymentFailedView.as_view(), name='payment_error'),
     url(r'^paypal/', include((PAYPAL_URLS, 'paypal'))),
     url(r'^sdn/', include((SDN_URLS, 'sdn'))),
     url(r'^stripe/', include((STRIPE_URLS, 'stripe'))),
-    url(r'^liqpay/', include(LIQPAY_URLS, namespace='liqpay'))
+    url(r'^liqpay/', include(LIQPAY_URLS, namespace='liqpay')),
+    url(r'^fondy/', include(FONDY_URLS, namespace='fondy')),
+    url(r'^portmone/', include(PORTMONE_URLS, namespace='portmone'))
 ]

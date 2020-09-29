@@ -35,6 +35,8 @@ class Liqpay(BasePaymentProcessor):
         self.currency = configuration['currency'] #UAH
         self.language = configuration['language'] #uk
 
+        #self.public_key = configuration['keys']['lvbs']['public_key']
+        #self.private_key = configuration['keys']['lvbs']['private_key']
         self.public_key = ''
         self.private_key = ''
 
@@ -72,14 +74,8 @@ class Liqpay(BasePaymentProcessor):
                 this dict must include a `payment_page_url` indicating the location of the processor's
                 hosted payment page.
         """
-        partner = 'prima'
 
-        org_ids = self._get_org_ids(basket)
-        if len(org_ids) == 1 and org_ids[0].lower() in self.keys:
-            partner = org_ids[0].lower()
-
-        self.public_key = self.keys[partner]['public_key']
-        self.private_key = self.keys[partner]['private_key']
+        self._set_keys_from_basket(basket)
 
         params = self._generate_parameters(basket)
 
@@ -89,6 +85,15 @@ class Liqpay(BasePaymentProcessor):
             'data': b64encode(json.dumps(params).encode("utf-8")).decode("ascii"),
         }
 
+    def _set_keys_from_basket(self, basket):
+        partner = 'prima'
+
+        #org_ids = self._get_org_ids(basket)
+        #if len(org_ids) == 1 and org_ids[0].lower() in self.keys:
+        #    partner = org_ids[0].lower()
+
+        self.public_key = self.keys[partner]['public_key']
+        self.private_key = self.keys[partner]['private_key']
 
     def _get_org_ids(self, basket):
         """
@@ -124,16 +129,28 @@ class Liqpay(BasePaymentProcessor):
              dict: Dictionary containing the payment parameters that should be sent to LiqPay.
         """
 
+        sandbox = self.sandbox
+
+        username = basket.owner.username
+        if username in ['parhom_999','Ivan','Alena_Sorokina','voyt2365','presli277','banderos1902','agutin_zirochka','john.lennon','ilon.mask.zirochka','super_freddiemercury','salvador_dali_12']:
+            sandbox = 1
+
+        course_name = ''
+        for line in basket.all_lines():
+            course_name = line.product.title.replace("Seat in ","")
+            course_name = course_name.replace(" with professional certificate","")
+            break
+
         return {
             "public_key": self.public_key,
-            "description": u"Оплата онлайн-курсу, замовлення "+basket.order_number,
+            "description": u"Оплата онлайн-курсу \"{}\", замовлення {}".format(course_name, basket.order_number),
             "order_id": basket.order_number,
             "currency": "UAH",
             "result_url": urljoin(get_ecommerce_url(), reverse('liqpay:processed')) + '?id=' + str(basket.id),
             "server_url": urljoin(get_ecommerce_url(), reverse('liqpay:callback')),
             "language": self.language,
             "amount": str(basket.total_incl_tax),
-            "sandbox": self.sandbox,
+            "sandbox": sandbox,
             "version": self.version,
             "action": "pay",
         }
@@ -156,6 +173,9 @@ class Liqpay(BasePaymentProcessor):
         """
         # NOTE(smandziuk): Validate the signature (indicating potential tampering)
         data = response.get('data')
+
+        self._set_keys_from_basket(basket)
+
         sign_string = str(self.private_key) + str(data) + str(self.private_key)
         sign = b64encode(hashlib.sha1(sign_string.encode("utf-8")).digest()).decode("ascii")
         if sign != response.get('signature'):
@@ -210,6 +230,9 @@ class Liqpay(BasePaymentProcessor):
             str: Reference number of the *refund* transaction. Unless the payment processor groups related transactions,
              this will *NOT* be the same as the `reference_number` argument.
         """
+        order_number = order.number
+        basket = order.basket
+        
         params = {
             'action': 'refund',
             'public_key': self.public_key,

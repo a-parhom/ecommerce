@@ -315,6 +315,7 @@ def generate_coupon_report(coupon_vouchers):
 
                     new_row = row.copy()
                     _add_redemption_course_ids(new_row, rows[0], redemption_course_ids)
+
                     new_row.update({
                         _('Status'): _('Redeemed'),
                         _('Order Number'): application.order.number,

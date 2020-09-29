@@ -20,7 +20,9 @@
         </a>
     {% else %}
         <h1 class="navbar-brand">
-            <img class="navbar-brand-logo" alt="{{ platform_name }} logo" src="{% static 'images/default-logo.png' %}"/>
+            <a href="https://prometheus.org.ua">
+                <img class="navbar-brand-logo" alt="{{ platform_name }} logo" src="{% static 'images/default-logo.png' %}"/>
+            </a>
         </h1>
     {% endif %}
 {% endblock navbar_brand %}

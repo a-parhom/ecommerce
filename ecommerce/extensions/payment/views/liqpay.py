@@ -6,6 +6,8 @@ import json
 import logging
 from base64 import b64decode
 
+import time
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError, transaction
 from django.http import HttpResponse
@@ -116,7 +118,10 @@ class LiqpayPaymentCallbackView(EdxOrderPlacementMixin, View):
             self.handle_post_order(order)
             return HttpResponse(status=201)
         except (ValueError, ObjectDoesNotExist, IntegrityError) as e:
-            logger.exception(self.order_placement_failure_msg, basket.id, e)
+            #logger.exception(self.order_placement_failure_msg.encode('utf-8'), basket.id, e)
+            logger.exception(u'Order Failure: payment was received, but an order for basket {id} could not be placed. Error message: {error}'.format(
+                id=basket.id, error=e
+            ))
             return redirect(self.payment_processor.error_url)
 
 
@@ -129,7 +134,12 @@ class LiqpayPaymentProcessedView(View):
     def payment_processor(self):
         return Liqpay(self.request.site)
 
-    def get(self, request):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        time.sleep(4)
+        return super(LiqpayPaymentProcessedView, self).dispatch(request, *args, **kwargs)
+
+    def post(self, request):
         basket_id = request.GET.get('id')
         basket = Basket.objects.get(id=basket_id)
         receipt_page_url = get_receipt_page_url(

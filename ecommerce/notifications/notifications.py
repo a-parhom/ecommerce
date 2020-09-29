@@ -14,7 +14,6 @@ Dispatcher = get_class('customer.utils', 'Dispatcher')
 
 def send_notification(user, commtype_code, context, site, recipient=None):
     """Send different notification mail to the user based on the triggering event.
-
     Args:
     user(obj): 'User' object to whom email is to send
     commtype_code(str): Communication type code
