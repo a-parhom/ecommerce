@@ -150,7 +150,7 @@ class VoucherIsValidTests(CourseCatalogTestMixin, TestCase):
         order = OrderFactory()
 
         VoucherApplication.objects.create(voucher=voucher, user=user, order=order)
-        error_msg = 'This coupon has already been used'
+        error_msg = 'Цей купон вже був використаний'
         self.assert_error_messages(voucher, product, user, error_msg)
 
 

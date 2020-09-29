@@ -131,30 +131,30 @@ def _get_info_for_coupon_report(coupon, voucher):
         price = None
 
     coupon_data = {
-        'Code': 'This row applies to all vouchers',
-        'Category': category_name,
-        'Coupon Expiry Date': voucher.end_datetime.strftime("%b %d, %y"),
-        'Coupon Name': voucher.name,
-        'Coupon Start Date': voucher.start_datetime.strftime("%b %d, %y"),
-        'Coupon Type': coupon_type,
-        'Created By': author,
-        'Create Date': history.history_date.strftime("%b %d, %y"),
-        'Discount Percentage': discount_percentage,
-        'Discount Amount': discount_amount,
-        'Email Domains': offer.email_domains,
-        'Invoiced Amount': invoiced_amount,
-        'Note': note,
-        'Price': price
+        _('Code'): _('This row applies to all vouchers'),
+        _('Category'): category_name,
+        _('Coupon Expiry Date'): voucher.end_datetime.strftime("%b %d, %y"),
+        _('Coupon Name'): voucher.name,
+        _('Coupon Start Date'): voucher.start_datetime.strftime("%b %d, %y"),
+        _('Coupon Type'): coupon_type,
+        _('Created By'): author,
+        _('Create Date'): history.history_date.strftime("%b %d, %y"),
+        _('Discount Percentage'): discount_percentage,
+        _('Discount Amount'): discount_amount,
+        _('Email Domains'): offer.email_domains,
+        _('Invoiced Amount'): invoiced_amount,
+        _('Note'): note,
+        _('Price'): price
     }
 
     if course_id:
-        coupon_data['Course ID'] = course_id
-        coupon_data['Organization'] = course_organization
+        coupon_data[_('Course ID')] = course_id
+        coupon_data[_('Organization')] = course_organization
     elif program_uuid:
-        coupon_data['Program UUID'] = program_uuid
+        coupon_data[_('Program UUID')] = program_uuid
     else:
-        coupon_data['Catalog Query'] = catalog_query
-        coupon_data['Course Seat Types'] = course_seat_types
+        coupon_data[_('Catalog Query')] = catalog_query
+        coupon_data[_('Course Seat Types')] = course_seat_types
 
     return coupon_data
 
@@ -180,11 +180,11 @@ def _get_voucher_info_for_coupon_report(voucher):
         max_uses_count = offer.max_global_applications
 
     coupon_data = {
-        'Code': voucher.code,
-        'Maximum Coupon Usage': max_uses_count,
-        'Redemption Count': redemption_count,
-        'Status': status,
-        'URL': url
+        _('Code'): voucher.code,
+        _('Maximum Coupon Usage'): max_uses_count,
+        _('Redemption Count'): redemption_count,
+        _('Status'): status,
+        _('URL'): url
     }
 
     return coupon_data
@@ -237,12 +237,12 @@ def generate_coupon_report(coupon_vouchers):
         coupon = coupon_voucher.coupon
         client = Invoice.objects.get(order__lines__product=coupon).business_client.name
         rows.append(_get_info_for_coupon_report(coupon, coupon_voucher.vouchers.first()))
-        rows[0]['Client'] = client
+        rows[0][_('Client')] = client
 
         for voucher in coupon_voucher.vouchers.all().prefetch_related('offers'):
             row = _get_voucher_info_for_coupon_report(voucher)
 
-            for item in ('Order Number', 'Redeemed By Username',):
+            for item in (_('Order Number'), _('Redeemed By Username'),):
                 row[item] = ''
 
             rows.append(row)
@@ -255,33 +255,33 @@ def generate_coupon_report(coupon_vouchers):
 
                     new_row = row.copy()
 
-                    if 'Catalog Query' in rows[0]:
-                        new_row['Redeemed For Course ID'] = redemption_course_id
+                    if _('Catalog Query') in rows[0]:
+                        new_row[_('Redeemed For Course ID')] = redemption_course_id
 
                     new_row.update({
-                        'Status': _('Redeemed'),
-                        'Order Number': application.order.number,
-                        'Redeemed By Username': redemption_user_username,
-                        'Maximum Coupon Usage': 1,
-                        'Redemption Count': 1,
+                        _('Status'): _('Redeemed'),
+                        _('Order Number'): application.order.number,
+                        _('Redeemed By Username'): redemption_user_username,
+                        _('Maximum Coupon Usage'): 1,
+                        _('Redemption Count'): 1,
                     })
                     rows.append(new_row)
 
-    if 'Program UUID' in rows[0]:
-        field_names.remove('Course ID')
-        field_names.remove('Organization')
-        field_names.remove('Catalog Query')
-        field_names.remove('Course Seat Types')
-        field_names.remove('Redeemed For Course ID')
-    elif 'Catalog Query' in rows[0]:
-        field_names.remove('Course ID')
-        field_names.remove('Organization')
-        field_names.remove('Program UUID')
+    if _('Program UUID') in rows[0]:
+        field_names.remove(_('Course ID'))
+        field_names.remove(_('Organization'))
+        field_names.remove(_('Catalog Query'))
+        field_names.remove(_('Course Seat Types'))
+        field_names.remove(_('Redeemed For Course ID'))
+    elif _('Catalog Query') in rows[0]:
+        field_names.remove(_('Course ID'))
+        field_names.remove(_('Organization'))
+        field_names.remove(_('Program UUID'))
     else:
-        field_names.remove('Catalog Query')
-        field_names.remove('Course Seat Types')
-        field_names.remove('Redeemed For Course ID')
-        field_names.remove('Program UUID')
+        field_names.remove(_('Catalog Query'))
+        field_names.remove(_('Course Seat Types'))
+        field_names.remove(_('Redeemed For Course ID'))
+        field_names.remove(_('Program UUID'))
 
     return field_names, rows
 

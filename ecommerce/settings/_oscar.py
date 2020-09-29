@@ -102,6 +102,7 @@ PAYMENT_PROCESSORS = (
     'ecommerce.extensions.payment.processors.cybersource.Cybersource',
     'ecommerce.extensions.payment.processors.paypal.Paypal',
     'ecommerce.extensions.payment.processors.liqpay.Liqpay',
+    'ecommerce.extensions.payment.processors.fondy.Fondy',
 )
 
 PAYMENT_PROCESSOR_RECEIPT_PATH = '/checkout/receipt/'

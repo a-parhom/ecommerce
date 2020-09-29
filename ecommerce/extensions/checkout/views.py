@@ -20,6 +20,7 @@ Applicator = get_class('offer.utils', 'Applicator')
 Basket = get_model('basket', 'Basket')
 Order = get_model('order', 'Order')
 
+import time
 
 class FreeCheckoutView(EdxOrderPlacementMixin, RedirectView):
     """ View to handle free checkouts.
