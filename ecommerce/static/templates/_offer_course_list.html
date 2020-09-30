@@ -54,12 +54,12 @@
                             <% } else { %>
                             <div class="pull-left">
                                 <p class="course-price">
-                                    <span>$<%= course.attributes.stockrecords.price_excl_tax %></span>
+                                    <span><%= course.attributes.stockrecords.price_excl_tax %> грн.</span>
                                 </p>
                             </div>
                             <div class="pull-left">
                                 <p class="course-new-price">
-                                    <span><!--<%- gettext('Now') %> -->$<%= course.attributes.new_price %></span>
+                                    <span><!--<%- gettext('Now') %> --><%= course.attributes.new_price %> грн.</span>
                                 </p>
                             </div>
                             <% } %>
@@ -87,7 +87,7 @@
                                                data-track-event="edx.bi.ecommerce.coupons.accept_offer"
                                                data-track-category="coupon-codes"
                                                data-course-id="<%= course.attributes.id %>">
-                                                <%- gettext('Checkout') %>
+                                                <!--<%- gettext('Checkout') %>-->Оплатити
                                             </a>
                                         <% } %>
                                 <% } %>
