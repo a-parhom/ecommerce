@@ -29,10 +29,15 @@ define([
             },
 
             onSuccess: function(data) {
+                var method = 'POST';
+                if(data.payment_page_url.includes('payparts2.privatbank.ua') !== false) {
+                    method = 'GET';
+                }
+
                 var $form = $('<form>', {
                     class: 'hidden',
                     action: data.payment_page_url,
-                    method: 'POST',
+                    method: method,
                     'accept-method': 'UTF-8'
                 });
 

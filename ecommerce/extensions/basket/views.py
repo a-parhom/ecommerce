@@ -353,6 +353,7 @@ class BasketLogicMixin:
             else:
                 course_about_url = get_lms_course_about_url(course_key=course_key)
 
+            """
             message_code = 'single-enrollment-code-warning'
             messages.info(
                 self.request,
@@ -371,6 +372,7 @@ class BasketLogicMixin:
                 extra_tags='safe ' + message_code
             )
             message_utils.add_message_data(message_code, 'course_about_url', course_about_url)
+            """
 
     @newrelic.agent.function_trace()
     def _is_id_verification_required(self, product):

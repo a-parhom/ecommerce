@@ -103,9 +103,9 @@ define([
 
             formatDate: function(course) {
                 var courseStartDateText = gettext(_s.sprintf('Course starts: %s',
-                        moment(course.get('course_start_date')).format('MMM DD, YYYY'))),
+                        moment(course.get('course_start_date')).format('DD MMM YYYY'))),
                     voucherEndDateText = gettext(_s.sprintf('Discount valid until %s',
-                        moment(course.get('voucher_end_date')).format('MMM DD, YYYY')));
+                        moment(course.get('voucher_end_date')).format('DD MMM YYYY')));
 
                 course.set({
                     course_start_date_text: courseStartDateText,

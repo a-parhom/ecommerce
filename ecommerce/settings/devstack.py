@@ -96,6 +96,26 @@ PAYMENT_PROCESSOR_CONFIG = {
             'cancel_checkout_path': PAYMENT_PROCESSOR_CANCEL_PATH,
             'error_path': PAYMENT_PROCESSOR_ERROR_PATH,
         },
+        'portmone': {
+            'payee_id': 'payee_id',
+            'login': 'login',
+            'password': 'password',
+            'host': 'https://www.portmone.com.ua/gateway/',
+            'currency': 'UAH',
+            'cancel_checkout_path': PAYMENT_PROCESSOR_CANCEL_PATH,
+            'error_path': PAYMENT_PROCESSOR_ERROR_PATH,
+            'lang': 'uk',
+        },
+        'privatparts': {
+            'store_id': 'store_id',
+            'password': 'password',
+            'parts_count': '2',
+            'host': 'https://payparts2.privatbank.ua/ipp/v2/',
+            'currency': 'UAH',
+            'cancel_checkout_path': PAYMENT_PROCESSOR_CANCEL_PATH,
+            'error_path': PAYMENT_PROCESSOR_ERROR_PATH,
+            'lang': 'uk',
+        },
     },
 }
 # END PAYMENT PROCESSING

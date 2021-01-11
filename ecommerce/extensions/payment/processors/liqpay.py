@@ -10,7 +10,7 @@ from decimal import Decimal
 import requests
 from django.urls import reverse
 from oscar.apps.payment.exceptions import GatewayError
-from urlparse import urljoin
+from urllib.parse import urljoin
 
 from ecommerce.core.url_utils import get_ecommerce_url
 from ecommerce.extensions.payment.exceptions import DuplicateReferenceNumber, InvalidSignatureError
@@ -132,7 +132,7 @@ class Liqpay(BasePaymentProcessor):
         sandbox = self.sandbox
 
         username = basket.owner.username
-        if username in ['parhom_999','Ivan','Alena_Sorokina','voyt2365','presli277','banderos1902','agutin_zirochka','john.lennon','ilon.mask.zirochka','super_freddiemercury','salvador_dali_12']:
+        if username in ['parhom','parhom_999','Ivan','Alena_Sorokina','voyt2365','presli277','banderos1902','agutin_zirochka','john.lennon','ilon.mask.zirochka','super_freddiemercury','salvador_dali_12']:
             sandbox = 1
 
         course_name = ''
@@ -140,6 +140,9 @@ class Liqpay(BasePaymentProcessor):
             course_name = line.product.title.replace("Seat in ","")
             course_name = course_name.replace(" with professional certificate","")
             break
+
+        if sandbox:
+            course_name += ' (sandbox)'
 
         return {
             "public_key": self.public_key,

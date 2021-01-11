@@ -131,6 +131,8 @@ PAYMENT_PROCESSORS = (
     'ecommerce.extensions.payment.processors.stripe.Stripe',
     'ecommerce.extensions.payment.processors.liqpay.Liqpay',
     'ecommerce.extensions.payment.processors.fondy.Fondy',
+    'ecommerce.extensions.payment.processors.portmone.Portmone',
+    'ecommerce.extensions.payment.processors.privatparts.Privatparts',
 )
 
 PAYMENT_PROCESSOR_RECEIPT_PATH = '/checkout/receipt/'

@@ -3,15 +3,27 @@
 {% block body %}
 <!-- Message Body -->
         <!--/message HTML content -->
-        <p>{% blocktrans %}Hi {{full_name}},{% endblocktrans %}</p>
         <br>
-        <p>{% blocktrans with course_title=course_title platform_name=platform_name %}Thank you for purchasing {{course_title}}. The charge below will appear on your next credit or debit card statement with a company name of {{platform_name}}.{% endblocktrans %}</p>
         <br>
-        <p>{% blocktrans %}You can access your course and complete your verification (if required) on your {{platform_name}} dashboard. {% endblocktrans %} </p>
-        <p>{% blocktrans %}To explore other great courses, visit the {{platform_name}} website. More courses are added every day!{% endblocktrans %}</p>
+        <p>Вітаємо, <b>{{full_name}}</b>!</p>
         <br>
-        <p>{% trans "Thank you. We hope you enjoy the course!" %}</p>
-        <p>{% blocktrans %}{{platform_name}} team {% endblocktrans %}</p>
+        <p>Дякуємо за придбання курсу <b>{{course_title}}</b> на Prometheus+.</p>
+        <br>
+        <p>Номер замовлення: <b>{{order_number}}</b>.</p>
+        <p>Вартість: <b>{{price}}</b>.</p>
+        <p>Дата замовлення: <b>{{date}}</b>.</p>
+        <br>
+        <br>
+        <p>Курс автоматично додався до вашого облікового запису на платформі. Ви можете переглянути його у вашому особистому кабінеті:</p>
+        <p><a href="https://courses.prometheus.org.ua/dashboard">https://courses.prometheus.org.ua/dashboard</a></p>
+        <p>Доступ до матеріалів відкривається в день старту курсу.</p>
+        <br>
+        <p>Більше курсів Prometheus+ ви можете знайти <a href="https://prometheus.org.ua/prometheus-plus">тут</a>. Щодня ми працюємо, щоб зробити досвід топових спеціалістів більш доступним.</p>
+        <p>Якщо у вас виникли питання, зверніться будь ласка на пошту <a href="mailto:support-plus@prometheus.org.ua">support-plus@prometheus.org.ua</a>, будемо раді допомогти!</p>
+        <br>
+        <br>
+        <p>З повагою,<br>
+           команда Prometheus+</p>
         <!--/message HTML content -->
 <!--/100% wrapper-->
 <br>
@@ -20,51 +32,14 @@
 
 {% block footer %}
 <!-- BEGIN FOOTER // -->
-<table border='0' cellpadding='0' cellspacing='0' id='templateFooter' style='border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;background-color: #FFFFFF;border-top: 0;border-bottom: 0;'>
-    <tr>
-        <td align='center' width='600' height='134' valign='top' background='https://prometheus.org.ua/images/letter_footer_bg.png' style='background-image: url(https://prometheus.org.ua/images/letter_footer_bg.png);background-repeat: no-repeat;background-size: contain;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;'>
-            <!--[if gte mso 9]>
-            <v:rect xmlns:v='urn:schemas-microsoft-com:vml' fill='true' stroke='false' style='width:600px;height:134px;'>
-                <v:fill type='tile' src='https://prometheus.org.ua/images/letter_footer_bg.png' color='#FFFFFF' />
-                <v:textbox inset='0,0,0,0'>
-            <![endif]-->
-            <div>
-            <table border='0' cellpadding='0' cellspacing='0' width='600' class='templateContainer' style='border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;'>
-                <tr>
-                    <td valign='top' class='footerContainer' style='padding-top: 10px;padding-right: 0px;padding-bottom: 10px;padding-left: 0px;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;'>
-                        <table border='0' cellpadding='0' cellspacing='0' width='100%' class='mcnTextBlock' style='border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;'>
-                            <tbody class='mcnTextBlockOuter'>
-                                <tr>
-                                    <td valign='top' class='mcnTextBlockInner' style='border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;'>
-                                        <table align='left' border='0' cellpadding='0' cellspacing='0' width='600' class='mcnTextContentContainer' style='border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;'>
-                                            <tbody>
-                                                <tr>
-                                                    <td valign='top' class='mcnTextContent' style='padding-top: 9px;padding-right: 18px;padding-bottom: 9px;padding-left: 18px;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;color: #FFFFFF;font-family: Montserrat, Arial, sans-serif;font-size: 11px;line-height: 125%;text-align: left;'>
-                                                        {% now 'Y' as year %}
-                                                        <em>© {{ year }} Prometheus, Всі права захищено.</em>
-                                                        <br>
-                                                        <br>
-                                                        <br>{% blocktrans with course_title=course_title platform_name=platform_name %}You are receiving this email because you purchased a seat in the {{platform_name}} course {{course_title}}.{% endblocktrans %}
-                                                        <br>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-            </table>
-            </div>
-            <!--[if gte mso 9]>
-                </v:textbox>
-            </v:rect>
-            <![endif]-->
-        </td>
-    </tr>
-</table>
+<p style="Margin:0;line-height:30px;mso-line-height-rule:exactly;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';font-size:14px;font-style:normal;font-weight:normal;color:#FFFFFF">
+    {% now 'Y' as year %}
+    <em>© {{ year }} Prometheus, Всі права захищено.</em>
+    <br>
+    <br>Ви одержали цей електронний лист, оскільки ви придбали місце на курсі {{course_title}}.
+    <br>
+    <br>
+</p>
 <!-- // END FOOTER -->
 {% endblock footer %}
 
