@@ -7,6 +7,8 @@ import logging
 from base64 import b64decode, b64encode
 from decimal import Decimal
 
+from datetime import datetime, timedelta
+
 import requests
 from django.urls import reverse
 from oscar.apps.payment.exceptions import GatewayError
@@ -143,6 +145,7 @@ class Liqpay(BasePaymentProcessor):
 
         if sandbox:
             course_name += ' (sandbox)'
+        expired = datetime.utcnow() + timedelta(hours=2)
 
         return {
             "public_key": self.public_key,
@@ -153,6 +156,7 @@ class Liqpay(BasePaymentProcessor):
             "server_url": urljoin(get_ecommerce_url(), reverse('liqpay:callback')),
             "language": self.language,
             "amount": str(basket.total_incl_tax),
+            "expired_date": expired.strftime("%Y-%m-%d %H:%M:%S"),
             "sandbox": sandbox,
             "version": self.version,
             "action": "pay",
