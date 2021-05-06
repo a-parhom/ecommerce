@@ -5,6 +5,8 @@ import logging
 from oscar.core.loading import get_class, get_model
 from premailer import transform
 
+from notifications.esputnik import ESputnikAPI
+
 from ecommerce.extensions.analytics.utils import parse_tracking_context
 
 log = logging.getLogger(__name__)
@@ -48,4 +50,5 @@ def send_notification(user, commtype_code, context, site, recipient=None):
 
     if messages and (messages['body'] or messages['html']):
         messages['html'] = transform(messages['html'])
-        Dispatcher().dispatch_user_messages(user, messages, site, recipient)
+        #Dispatcher().dispatch_user_messages(user, messages, site, recipient)
+        ESputnikAPI().send_email(user, messages, site, recipient)
