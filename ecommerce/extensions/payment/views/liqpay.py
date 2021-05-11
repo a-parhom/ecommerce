@@ -8,6 +8,8 @@ from base64 import b64decode
 
 import time
 
+from urllib.parse import urljoin
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError, transaction
 from django.http import HttpResponse
