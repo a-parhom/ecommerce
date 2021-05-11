@@ -8,7 +8,7 @@ from base64 import b64decode
 
 import time
 
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlencode
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError, transaction
@@ -172,7 +172,7 @@ class LiqpayPaymentProcessedView(View):
 
             else:
                 base_url = urljoin(get_ecommerce_url(), reverse('liqpay:wait'))
-                params = parse.urlencode({'basket': basket.id})
+                params = urlencode({'basket': basket.id})
                 return redirect('{base_url}{params}'.format(
                     base_url=base_url,
                     params='?{params}'.format(params=params) if params else ''
