@@ -58,3 +58,6 @@ class RedundantPaymentNotificationError(PaymentError):
 
 class ExcessivePaymentForOrderError(PaymentError):
     """ Raised when duplicate payment notification is detected with different transaction ID. """
+
+class LiqPayWaitSecureStatus(Exception):
+    """ Raised when LiqPay returns wait_secure status """

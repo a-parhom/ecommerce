@@ -31,6 +31,7 @@ STRIPE_URLS = [
 LIQPAY_URLS = [
     url(r'^callback/$', liqpay.LiqpayPaymentCallbackView.as_view(), name='callback'),
     url(r'^processed/$', liqpay.LiqpayPaymentProcessedView.as_view(), name='processed'),
+    url(r'^wait/$', liqpay.LiqpayPaymentWaitView.as_view(), name='wait'),
 ]
 
 PRIVATPARTS_URLS = [
