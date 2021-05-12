@@ -24,7 +24,7 @@ from oscar.core.loading import get_class, get_model
 from ecommerce.core.url_utils import get_ecommerce_url
 from ecommerce.extensions.checkout.mixins import EdxOrderPlacementMixin
 from ecommerce.extensions.checkout.utils import get_receipt_page_url
-from ecommerce.extensions.payment.exceptions import InvalidBasketError, LiqPayWaitSecureStatus
+from ecommerce.extensions.payment.exceptions import InvalidBasketError, LiqPayWaitSecureStatus, LiqPayReversedStatus
 from ecommerce.extensions.payment.processors.liqpay import Liqpay
 
 logger = logging.getLogger(__name__)
@@ -110,29 +110,32 @@ class LiqpayPaymentCallbackView(EdxOrderPlacementMixin, View):
                     self.handle_payment(liqpay_response, basket)
                 except LiqPayWaitSecureStatus:
                     logger.exception(u'LiqPay payment for basket {id} is being checked'.format(id=basket.id))
-                    return HttpResponse(status=201)
+                    return HttpResponse(status=200)
+                except LiqPayReversedStatus:
+                    logger.exception(u'LiqPay payment for basket {id} was reversed'.format(id=basket.id))
+                    return HttpResponse(status=200)
                 except PaymentError:
                     logger.exception(u'LiqPay payment failed for basket {id}'.format(id=basket.id))
                     #return redirect(self.payment_processor.error_url)
-                    return HttpResponse(status=201)
+                    return HttpResponse(status=200)
         except IntegrityError as e:
             logger.exception(u'Attempts to handle payment for basket {id} failed. Error message: {error}'.format(
                 id=basket.id, error=e
             ))
             #return redirect(self.payment_processor.error_url)
-            return HttpResponse(status=201)
+            return HttpResponse(status=200)
 
         try:
             order = self.create_order(request, basket)
             self.handle_post_order(order)
-            return HttpResponse(status=201)
+            return HttpResponse(status=200)
         except (ValueError, ObjectDoesNotExist, IntegrityError) as e:
             #logger.exception(self.order_placement_failure_msg.encode('utf-8'), basket.id, e)
             logger.exception(u'Order Failure: payment was received, but an order for basket {id} could not be placed. Error message: {error}'.format(
                 id=basket.id, error=e
             ))
             #return redirect(self.payment_processor.error_url)
-            return HttpResponse(status=201)
+            return HttpResponse(status=200)
 
 
 class LiqpayPaymentProcessedView(View):

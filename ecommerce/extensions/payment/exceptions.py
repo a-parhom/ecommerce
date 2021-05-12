@@ -61,3 +61,6 @@ class ExcessivePaymentForOrderError(PaymentError):
 
 class LiqPayWaitSecureStatus(Exception):
     """ Raised when LiqPay returns wait_secure status """
+
+class LiqPayReversedStatus(Exception):
+    """ Raised when LiqPay returns reversed status """

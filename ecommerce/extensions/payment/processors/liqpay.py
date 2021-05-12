@@ -15,7 +15,7 @@ from oscar.apps.payment.exceptions import GatewayError
 from urllib.parse import urljoin
 
 from ecommerce.core.url_utils import get_ecommerce_url
-from ecommerce.extensions.payment.exceptions import DuplicateReferenceNumber, InvalidSignatureError, LiqPayWaitSecureStatus
+from ecommerce.extensions.payment.exceptions import DuplicateReferenceNumber, InvalidSignatureError, LiqPayWaitSecureStatus, LiqPayReversedStatus
 from ecommerce.extensions.payment.processors import BasePaymentProcessor, HandledProcessorResponse
 
 
@@ -201,7 +201,11 @@ class Liqpay(BasePaymentProcessor):
             
             if transaction_state == 'wait_secure':
                 self.record_processor_response(decode_data, transaction_id=transaction_id, basket=basket)
-                raise LiqPayWaitSecureStatus('Order {id} got wait_secure status'.format(id=decode_data.get('order_id')))
+                raise LiqPayWaitSecureStatus('Order {id} got wait_secure status.'.format(id=decode_data.get('order_id')))
+            
+            if transaction_state == 'reversed':
+                self.record_processor_response(decode_data, transaction_id=transaction_id, basket=basket)
+                raise LiqPayReversedStatus('Payment for order {id} was reversed.'.format(id=decode_data.get('order_id')))
             
             if transaction_state in ('error', 'failure') and error_code == 'order_id_duplicate':
                 self.record_processor_response(decode_data, transaction_id=transaction_id, basket=basket)
