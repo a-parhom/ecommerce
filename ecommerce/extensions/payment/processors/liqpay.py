@@ -235,12 +235,13 @@ class Liqpay(BasePaymentProcessor):
         )
 
 
-    def issue_credit(self, order, reference_number, amount, currency):
+    def issue_credit(self, order, basket, reference_number, amount, currency):
         """
         Issue a credit for the specified transaction.
 
         Arguments:
             order (Order): Order being refunded.
+            basket (Basket): Basket associated with the order being refunded.
             reference_number (str): Reference number of the transaction being refunded.
             amount (Decimal): amount to be credited/refunded
             currency (string): currency of the amount to be credited
@@ -250,7 +251,6 @@ class Liqpay(BasePaymentProcessor):
              this will *NOT* be the same as the `reference_number` argument.
         """
         order_number = order.number
-        basket = order.basket
         
         params = {
             'action': 'refund',
