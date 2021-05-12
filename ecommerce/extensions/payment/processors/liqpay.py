@@ -261,7 +261,7 @@ class Liqpay(BasePaymentProcessor):
             'currency': currency,
         }
         refund_data = {
-            'signature': self._make_signature(self.private_key, params, self.private_key),
+            'signature': self.make_signature(params),
             'data': b64encode(json.dumps(params).encode("utf-8")).decode("ascii"),
         }
         refund_url = urljoin(self.configuration['host'], 'request')
