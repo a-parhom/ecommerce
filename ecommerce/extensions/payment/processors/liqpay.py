@@ -250,6 +250,7 @@ class Liqpay(BasePaymentProcessor):
             str: Reference number of the *refund* transaction. Unless the payment processor groups related transactions,
              this will *NOT* be the same as the `reference_number` argument.
         """
+        self._set_keys_from_basket(basket)
         
         params = {
             'action': 'refund',
