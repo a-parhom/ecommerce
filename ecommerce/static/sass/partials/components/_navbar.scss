@@ -104,6 +104,11 @@
       margin-top: 12px;
       margin-bottom: 12px;
     }
+  }
+}
+
+@media (max-width: $grid-float-breakpoint-max) {
+  .navbar {
     .navbar-brand {
       margin: 0;
     }
