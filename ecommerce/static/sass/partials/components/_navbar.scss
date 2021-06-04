@@ -23,11 +23,11 @@
   border-radius: 0;
 
   .container {
-    background-color: #2a3b4c;
+    background-color: #fff;
   }
 
   // Add our own border
-  border-bottom: $navbar-border-bottom-width solid palette(primary, accent);
+  border-bottom: none;
 
   // Vertically center the logo
   .navbar-brand {
