@@ -8,7 +8,7 @@
       &:focus {
         color: white;
         outline: inherit;
-        background-color: #337ab7;
+        background-color: #244B83;
         border-bottom-color: transparent;
       }
     }
@@ -55,8 +55,8 @@
     &:hover,
     &:focus {
       color: white;
-      border-color: #337ab7;
-      background-color: #337ab7;
+      border-color: #244B83;
+      background-color: #244B83;
 
       > .icon-bar {
         background-color: white;
@@ -103,6 +103,9 @@
       @include navbar-vertical-align($input-height-base);
       margin-top: 12px;
       margin-bottom: 12px;
+    }
+    .navbar-brand {
+      margin: 0;
     }
   }
 }
