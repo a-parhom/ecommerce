@@ -502,3 +502,30 @@
         }
     }
 }
+
+a:not(.btn):hover, a:not(.btn):focus, a:visited:not(.btn):hover, a:visited:not(.btn):focus {
+    color: #F58932;
+    text-decoration: none;
+    border: none;
+}
+a.button, button {
+    padding: 12px 16px;
+    background: #244B83 !important;
+    border-radius: 8px;
+    color: #ffffff !important;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    border: none;
+    text-shadow: none;
+    box-shadow: none;
+}
+
+a.button:hover, a.button:focus, a.button:active, button:hover, button:focus, button:active {
+    background: #F58932 !important;
+    border: none;
+    text-shadow: none;
+    color: #ffffff;
+    text-decoration: none;
+    box-shadow: none !important;
+}
