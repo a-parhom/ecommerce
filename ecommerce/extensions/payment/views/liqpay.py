@@ -8,20 +8,23 @@ from base64 import b64decode
 
 import time
 
+from urllib.parse import urljoin, urlencode
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError, transaction
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import View
+from django.views.generic import View, TemplateView
 from oscar.apps.partner import strategy
 from oscar.apps.payment.exceptions import PaymentError
 from oscar.core.loading import get_class, get_model
 
+from ecommerce.core.url_utils import get_ecommerce_url
 from ecommerce.extensions.checkout.mixins import EdxOrderPlacementMixin
 from ecommerce.extensions.checkout.utils import get_receipt_page_url
-from ecommerce.extensions.payment.exceptions import InvalidBasketError
+from ecommerce.extensions.payment.exceptions import InvalidBasketError, LiqPayWaitSecureStatus, LiqPayReversedStatus
 from ecommerce.extensions.payment.processors.liqpay import Liqpay
 
 logger = logging.getLogger(__name__)
@@ -32,6 +35,7 @@ NoShippingRequired = get_class('shipping.methods', 'NoShippingRequired')
 Order = get_model('order', 'Order')
 OrderNumberGenerator = get_class('order.utils', 'OrderNumberGenerator')
 OrderTotalCalculator = get_class('checkout.calculators', 'OrderTotalCalculator')
+PaymentProcessorResponse = get_model('payment', 'PaymentProcessorResponse')
 
 
 class LiqpayPaymentCallbackView(EdxOrderPlacementMixin, View):
@@ -104,25 +108,34 @@ class LiqpayPaymentCallbackView(EdxOrderPlacementMixin, View):
             with transaction.atomic():
                 try:
                     self.handle_payment(liqpay_response, basket)
+                except LiqPayWaitSecureStatus:
+                    logger.exception(u'LiqPay payment for basket {id} is being checked'.format(id=basket.id))
+                    return HttpResponse(status=200)
+                except LiqPayReversedStatus:
+                    logger.exception(u'LiqPay payment for basket {id} was reversed'.format(id=basket.id))
+                    return HttpResponse(status=200)
                 except PaymentError:
                     logger.exception(u'LiqPay payment failed for basket {id}'.format(id=basket.id))
-                    return redirect(self.payment_processor.error_url)
+                    #return redirect(self.payment_processor.error_url)
+                    return HttpResponse(status=200)
         except IntegrityError as e:
             logger.exception(u'Attempts to handle payment for basket {id} failed. Error message: {error}'.format(
                 id=basket.id, error=e
             ))
-            return redirect(self.payment_processor.error_url)
+            #return redirect(self.payment_processor.error_url)
+            return HttpResponse(status=200)
 
         try:
             order = self.create_order(request, basket)
             self.handle_post_order(order)
-            return HttpResponse(status=201)
+            return HttpResponse(status=200)
         except (ValueError, ObjectDoesNotExist, IntegrityError) as e:
             #logger.exception(self.order_placement_failure_msg.encode('utf-8'), basket.id, e)
             logger.exception(u'Order Failure: payment was received, but an order for basket {id} could not be placed. Error message: {error}'.format(
                 id=basket.id, error=e
             ))
-            return redirect(self.payment_processor.error_url)
+            #return redirect(self.payment_processor.error_url)
+            return HttpResponse(status=200)
 
 
 class LiqpayPaymentProcessedView(View):
@@ -142,6 +155,7 @@ class LiqpayPaymentProcessedView(View):
     def post(self, request):
         basket_id = request.GET.get('id')
         basket = Basket.objects.get(id=basket_id)
+
         receipt_page_url = get_receipt_page_url(
             order_number=basket.order_number,
             site_configuration=basket.site.siteconfiguration
@@ -150,4 +164,34 @@ class LiqpayPaymentProcessedView(View):
             Order.objects.get(number=basket.order_number)
             return redirect(receipt_page_url)
         except Order.DoesNotExist:
-            return redirect(self.payment_processor.cancel_url)
+            try:
+                processor_response = PaymentProcessorResponse.objects.get(
+                    processor_name=self.payment_processor.NAME,
+                    basket=basket,
+                    response__contains='wait_secure')
+
+            except PaymentProcessorResponse.DoesNotExist:
+                return redirect(self.payment_processor.cancel_url)
+
+            else:
+                base_url = urljoin(get_ecommerce_url(), reverse('liqpay:wait'))
+                params = urlencode({'basket': basket.id})
+                return redirect('{base_url}{params}'.format(
+                    base_url=base_url,
+                    params='?{params}'.format(params=params) if params else ''
+                ))
+
+
+class LiqpayPaymentWaitView(TemplateView):
+    template_name = "liqpay_wait.html"
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+
+        basket_id = self.request.GET.get('basket')
+        basket = Basket.objects.get(id=int(basket_id))
+        basket.strategy = strategy.Default()
+
+        context['basket'] = basket
+        return context

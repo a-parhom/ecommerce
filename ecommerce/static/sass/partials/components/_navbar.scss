@@ -8,7 +8,7 @@
       &:focus {
         color: white;
         outline: inherit;
-        background-color: #337ab7;
+        background-color: #244B83;
         border-bottom-color: transparent;
       }
     }
@@ -23,11 +23,11 @@
   border-radius: 0;
 
   .container {
-    background-color: #2a3b4c;
+    background-color: #fff;
   }
 
   // Add our own border
-  border-bottom: $navbar-border-bottom-width solid palette(primary, accent);
+  border-bottom: none;
 
   // Vertically center the logo
   .navbar-brand {
@@ -55,8 +55,8 @@
     &:hover,
     &:focus {
       color: white;
-      border-color: #337ab7;
-      background-color: #337ab7;
+      border-color: #244B83;
+      background-color: #244B83;
 
       > .icon-bar {
         background-color: white;
@@ -101,11 +101,23 @@
     // Display the user menu as a .navbar-btn when not collapsed to handle vertical centering.
     .user-menu {
       @include navbar-vertical-align($input-height-base);
+      margin-top: 12px;
+      margin-bottom: 12px;
+    }
+  }
+}
+
+@media (max-width: $grid-float-breakpoint-max) {
+  .navbar {
+    .navbar-brand {
+      margin: 0;
     }
   }
 }
 
 .user-menu {
+  margin-top: 20px;
+  margin-bottom: 20px;
   > .nav-button {
     border-color: palette(grayscale, light);
     color: palette(grayscale, dark);
@@ -126,10 +138,12 @@
 
     .icon {
       display: inline-block;
-      float: left;
-      margin: 2px 6px -3px 3px;
       font-size: 1.2em;
-      color: palette(grayscale, base);
+      margin: 0 10px 0 0;
+      float: none;
+      color: #ffffff;
+      position: relative;
+      top: 1px;
     }
   }
 }

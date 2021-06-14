@@ -7,13 +7,15 @@ import logging
 from base64 import b64decode, b64encode
 from decimal import Decimal
 
+from datetime import datetime, timedelta
+
 import requests
 from django.urls import reverse
 from oscar.apps.payment.exceptions import GatewayError
 from urllib.parse import urljoin
 
 from ecommerce.core.url_utils import get_ecommerce_url
-from ecommerce.extensions.payment.exceptions import DuplicateReferenceNumber, InvalidSignatureError
+from ecommerce.extensions.payment.exceptions import DuplicateReferenceNumber, InvalidSignatureError, LiqPayWaitSecureStatus, LiqPayReversedStatus
 from ecommerce.extensions.payment.processors import BasePaymentProcessor, HandledProcessorResponse
 
 
@@ -143,6 +145,7 @@ class Liqpay(BasePaymentProcessor):
 
         if sandbox:
             course_name += ' (sandbox)'
+        expired = datetime.utcnow() + timedelta(hours=2)
 
         return {
             "public_key": self.public_key,
@@ -153,6 +156,7 @@ class Liqpay(BasePaymentProcessor):
             "server_url": urljoin(get_ecommerce_url(), reverse('liqpay:callback')),
             "language": self.language,
             "amount": str(basket.total_incl_tax),
+            "expired_date": expired.strftime("%Y-%m-%d %H:%M:%S"),
             "sandbox": sandbox,
             "version": self.version,
             "action": "pay",
@@ -194,12 +198,24 @@ class Liqpay(BasePaymentProcessor):
         if transaction_state not in ('success', 'sandbox'):
             error_code = decode_data.get('err_code')
             error_description = decode_data.get('err_decription')
+            
+            if transaction_state == 'wait_secure':
+                self.record_processor_response(decode_data, transaction_id=transaction_id, basket=basket)
+                raise LiqPayWaitSecureStatus('Order {id} got wait_secure status.'.format(id=decode_data.get('order_id')))
+            
+            if transaction_state == 'reversed':
+                self.record_processor_response(decode_data, transaction_id=transaction_id, basket=basket)
+                raise LiqPayReversedStatus('Payment for order {id} was reversed.'.format(id=decode_data.get('order_id')))
+            
             if transaction_state in ('error', 'failure') and error_code == 'order_id_duplicate':
+                self.record_processor_response(decode_data, transaction_id=transaction_id, basket=basket)
                 raise DuplicateReferenceNumber('Order_id [{id}] is duplicated.'.format(id=decode_data.get('order_id')))
+            
             msg = 'Status: {status}, code: {error_code} - {err_description}'.format(
                 status=transaction_state, error_code=error_code, err_description=error_description
             )
             logger.error(msg)
+            self.record_processor_response(decode_data, transaction_id=transaction_id, basket=basket)
             raise GatewayError(msg)
 
         self.record_processor_response(decode_data, transaction_id=transaction_id, basket=basket)
@@ -219,12 +235,13 @@ class Liqpay(BasePaymentProcessor):
         )
 
 
-    def issue_credit(self, order, reference_number, amount, currency):
+    def issue_credit(self, order_number, basket, reference_number, amount, currency):
         """
         Issue a credit for the specified transaction.
 
         Arguments:
-            order (Order): Order being refunded.
+            order_number (str): Order number of the order being refunded.
+            basket (Basket): Basket associated with the order being refunded.
             reference_number (str): Reference number of the transaction being refunded.
             amount (Decimal): amount to be credited/refunded
             currency (string): currency of the amount to be credited
@@ -233,8 +250,7 @@ class Liqpay(BasePaymentProcessor):
             str: Reference number of the *refund* transaction. Unless the payment processor groups related transactions,
              this will *NOT* be the same as the `reference_number` argument.
         """
-        order_number = order.number
-        basket = order.basket
+        self._set_keys_from_basket(basket)
         
         params = {
             'action': 'refund',
@@ -246,7 +262,7 @@ class Liqpay(BasePaymentProcessor):
             'currency': currency,
         }
         refund_data = {
-            'signature': self._make_signature(self.private_key, params, self.private_key),
+            'signature': self.make_signature(params),
             'data': b64encode(json.dumps(params).encode("utf-8")).decode("ascii"),
         }
         refund_url = urljoin(self.configuration['host'], 'request')

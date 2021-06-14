@@ -23,6 +23,8 @@
 
     .container {
         padding: 25px 20px 30px 20px;
+        margin-top: 25px;
+        border-radius: 8px;
 
         .alertinner p:last-child {
             display: none;
@@ -206,7 +208,7 @@
             #basket_totals {
                 @include text-align(right);
 
-                color: #337ab7;
+                color: #244B83;
                 font-size: 18px;
                 font-weight: bold;
             }
@@ -316,7 +318,7 @@
 
 .basket-client-side {
     .title {
-        color: #337ab7;
+        color: #244B83;
         font-size: 16px;
         font-weight: bold;
         text-transform: capitalize;
@@ -369,7 +371,7 @@
                 border: 1px solid palette(grayscale, base);
                 border-radius: 5px;
                 height: 50px;
-                border-bottom: 4px solid #337ab7;
+                border-bottom: 4px solid #244B83;
                 width: 150px;
                 line-height: 40px;
                 padding: 0;
@@ -577,7 +579,7 @@
                         padding-left: 0;
                         border: 0;
                         background-color: white;
-                        color: #337ab7;
+                        color: #244B83;
                     }
                 }
 
@@ -621,7 +623,7 @@
             }
 
             .remove-voucher {
-                color: #337ab7;
+                color: #244B83;
             }
 
             #order-details {

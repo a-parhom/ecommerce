@@ -1,0 +1,56 @@
+{% extends 'edx/base.html' %}
+{% load core_extras %}
+{% load currency_filters %}
+{% load i18n %}
+{% load django_markup %}
+{% load l10n %}
+{% load offer_tags %}
+{% load static %}
+{% load enterprise %}
+{% block content %}
+  <script>
+  var price = {{ basket.total_incl_tax | unlocalize }};
+  if(price > 0) {  
+    window.dataLayer = window.dataLayer || [];
+    dataLayer.push({
+    'event': 'ecommerce_event',
+    'eventCategory': 'Ecommerce',
+    'eventAction': 'purchase',
+      'ecommerce': {
+        'purchase': {
+          'actionField': {
+            'id': '{{ order.number }}',                         
+            'affiliation': 'Online Store',
+            'revenue': price, 
+            'tax':'0.0',
+            'shipping': '0.0',
+            'coupon': ''
+          },
+          'products': [                            
+{% for line in basket.lines.all %}
+           {
+            'name': '{{ line.product.course.name }}',
+            'id': '{{ line.product.course.id }}',
+            'price': '{{ line.price_incl_tax | unlocalize }}',
+            'brand': '{{ line.product.course.id|course_organization }}',
+            'category': 'Online course',
+            'variant': '',
+            'quantity': 1
+           },
+{% endfor %}
+           ]
+        }
+      }
+    });
+  }
+  </script>
+  <div class="container content-container">
+    <h2 class="thank-you">{% trans "Thank you for your order!" as tmsg %}{{ tmsg | force_escape }}</h2>
+    <div>
+      <p>Ваш платіж знаходиться у процесі перевірки LiqPay. Щойно його буде успішно оброблено, ви отримаєте на пошту лист та побачите курс в <a href='https://courses.prometheus.org.ua/dashboard' target='_blank'>особистому кабінеті</a> на платформі.</p>
+      
+      <p>У разі виникнення будь-яких запитань, звертайтесь на пошту <a href='mailto:support-plus@prometheus.org.ua'>support-plus@prometheus.org.ua</a>.</p>
+    </div>
+  </div>
+
+{% endblock content %}

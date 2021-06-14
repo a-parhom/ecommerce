@@ -141,7 +141,7 @@ def send_course_purchase_email(sender, order=None, request=None, **kwargs):  # p
                     order.user,
                     'COURSE_PURCHASED',
                     {
-                        'course_title': product.title.replace("Seat in ","").replace(" with professional certificate",""),
+                        'course_title': product.title.replace("Seat in ","").replace(" with professional certificate","").replace(" with verified certificate (and ID verification)",""),
                         'receipt_page_url': receipt_page_url,
                         'order_number': order.number,
                         'price': order.basket.total_incl_tax,
